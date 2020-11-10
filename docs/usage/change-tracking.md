@@ -56,3 +56,18 @@ import { Document } from "docx";
 const doc = new Document({});
 doc.Settings.addTrackRevisions()
 ```
+
+If you want to express a style changes, you can add a `revision` to a `TextRun` which need to include all previous style attributes.
+
+```ts
+new TextRun({
+    bold: true,
+    text: "This text is now bold and was previously not",
+    revision: {
+        id: 1,
+        author: "Firstname Lastname",
+        date: "2020-10-06T09:05:00Z",
+        bold: false,
+    }
+}).break()
+````

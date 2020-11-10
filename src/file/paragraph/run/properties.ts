@@ -24,6 +24,7 @@ import { IFontAttributesProperties, RunFonts } from "./run-fonts";
 import { SubScript, SuperScript } from "./script";
 import { Style } from "./style";
 import { Underline, UnderlineType } from "./underline";
+import { ChangeAttributes, IChangedAttributesProperties } from "../../track-revision/track-revision";
 
 interface IFontOptions {
     readonly name: string;
@@ -63,11 +64,15 @@ export interface IRunStylePropertiesOptions {
     };
     readonly shadingComplexScript?: boolean | IRunStylePropertiesOptions["shading"];
     readonly shadow?: IRunStylePropertiesOptions["shading"];
+    readonly change?: IRunStylePropertiesOptions;
+    readonly revision?: IRunPropertiesChangeOptions;
 }
 
 export interface IRunPropertiesOptions extends IRunStylePropertiesOptions {
     readonly style?: string;
 }
+
+export interface IRunPropertiesChangeOptions extends IRunPropertiesOptions, IChangedAttributesProperties {}
 
 export class RunProperties extends IgnoreIfEmptyXmlComponent {
     constructor(options?: IRunPropertiesOptions) {
@@ -178,9 +183,27 @@ export class RunProperties extends IgnoreIfEmptyXmlComponent {
         if (shdCs) {
             this.push(new ShadowComplexScript(shdCs.type, shdCs.fill, shdCs.color));
         }
+
+        if (options.revision) {
+            this.push(new RunPropertiesChange(options.revision));
+        }
     }
 
     public push(item: XmlComponent): void {
         this.root.push(item);
+    }
+}
+
+export class RunPropertiesChange extends XmlComponent {
+    constructor(options: IRunPropertiesChangeOptions) {
+        super("w:rPrChange");
+        this.root.push(
+            new ChangeAttributes({
+                id: options.id,
+                author: options.author,
+                date: options.date,
+            }),
+        );
+        this.addChildElement(new RunProperties(options as IRunPropertiesOptions));
     }
 }
