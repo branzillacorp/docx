@@ -1,7 +1,8 @@
 import { XmlAttributeComponent, XmlComponent } from "file/xml-components";
 import { Compatibility } from "./compatibility";
-import { UpdateFields } from "./update-fields";
+import { DisplayBackgroundShape } from "./display-background-shape";
 import { TrackRevisions } from "./track-revisions";
+import { UpdateFields } from "./update-fields";
 
 export interface ISettingsAttributesProperties {
     readonly wpc?: string;
@@ -46,8 +47,8 @@ export class SettingsAttributes extends XmlAttributeComponent<ISettingsAttribute
 }
 
 export class Settings extends XmlComponent {
-    private readonly compatibility;
-    private readonly trackRevisions;
+    private readonly compatibility: Compatibility;
+    private readonly trackRevisions: TrackRevisions;
 
     constructor() {
         super("w:settings");
@@ -72,8 +73,11 @@ export class Settings extends XmlComponent {
                 Ignorable: "w14 w15 wp14",
             }),
         );
+
         this.compatibility = new Compatibility();
         this.trackRevisions = new TrackRevisions();
+
+        this.root.push(new DisplayBackgroundShape());
     }
 
     public addUpdateFields(): void {

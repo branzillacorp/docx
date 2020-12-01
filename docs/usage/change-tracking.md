@@ -53,8 +53,11 @@ In addtion to marking text as inserted or deleted, change tracking can also be a
 ```ts
 import { Document } from "docx";
 
-const doc = new Document({});
-doc.Settings.addTrackRevisions()
+const doc = new Document({
+    features: {
+        trackRevisions: true,
+    },
+});
 ```
 
 If you want to express a style changes, you can add a `revision` to a `TextRun` which need to include all previous style attributes.

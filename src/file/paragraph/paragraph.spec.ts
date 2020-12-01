@@ -5,8 +5,10 @@ import { stub } from "sinon";
 import { Formatter } from "export/formatter";
 import { EMPTY_OBJECT } from "file/xml-components";
 
+import { File } from "../file";
+import { ShadingType } from "../table/shading";
 import { AlignmentType, HeadingLevel, LeaderType, PageBreak, TabStopPosition, TabStopType } from "./formatting";
-import { Bookmark } from "./links";
+import { Bookmark, HyperlinkRef } from "./links";
 import { Paragraph } from "./paragraph";
 
 describe("Paragraph", () => {
@@ -756,6 +758,55 @@ describe("Paragraph", () => {
                         "w:pPr": [{ "w:outlineLvl": { _attr: { "w:val": 0 } } }],
                     },
                 ],
+            });
+        });
+    });
+
+    describe("#shading", () => {
+        it("should set paragraph outline level to the given value", () => {
+            const paragraph = new Paragraph({
+                shading: {
+                    type: ShadingType.REVERSE_DIAGONAL_STRIPE,
+                    color: "00FFFF",
+                    fill: "FF0000",
+                },
+            });
+            const tree = new Formatter().format(paragraph);
+            expect(tree).to.deep.equal({
+                "w:p": [
+                    {
+                        "w:pPr": [
+                            {
+                                "w:shd": {
+                                    _attr: {
+                                        "w:color": "00FFFF",
+                                        "w:fill": "FF0000",
+                                        "w:val": "reverseDiagStripe",
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                ],
+            });
+        });
+    });
+
+    describe("#prepForXml", () => {
+        it("should set paragraph outline level to the given value", () => {
+            const paragraph = new Paragraph({
+                children: [new HyperlinkRef("myAnchorId")],
+            });
+            const fileMock = ({
+                HyperlinkCache: {
+                    myAnchorId: "test",
+                },
+                // tslint:disable-next-line: no-any
+            } as any) as File;
+            paragraph.prepForXml(fileMock);
+            const tree = new Formatter().format(paragraph);
+            expect(tree).to.deep.equal({
+                "w:p": ["test"],
             });
         });
     });

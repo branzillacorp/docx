@@ -1,5 +1,6 @@
 import { ShadingType } from "file/table";
 import { IgnoreIfEmptyXmlComponent, XmlComponent } from "file/xml-components";
+import { ChangeAttributes, IChangedAttributesProperties } from "../../track-revision/track-revision";
 import { EmphasisMark, EmphasisMarkType } from "./emphasis-mark";
 import {
     Bold,
@@ -24,7 +25,6 @@ import { IFontAttributesProperties, RunFonts } from "./run-fonts";
 import { SubScript, SuperScript } from "./script";
 import { Style } from "./style";
 import { Underline, UnderlineType } from "./underline";
-import { ChangeAttributes, IChangedAttributesProperties } from "../../track-revision/track-revision";
 
 interface IFontOptions {
     readonly name: string;
